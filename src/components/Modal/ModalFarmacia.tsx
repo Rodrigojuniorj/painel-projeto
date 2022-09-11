@@ -2,6 +2,9 @@ import { X } from "phosphor-react";
 import Modal from ".";
 import { Button } from "../Button";
 import { FormContentModal, ModalInputContent } from "./ModalFarmaciaStyles";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { useState } from "react";
 
 interface ModalFarmaciaProps {
   modalAddIsOpen: boolean;
@@ -9,6 +12,13 @@ interface ModalFarmaciaProps {
 }
 
 export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal}:ModalFarmaciaProps){
+  const [descricao, setDescricao] = useState('');
+
+  const handleCkeditorState = (event: any, editor: any) => {
+    const data = editor.getData();
+    console.log(data)
+  }
+
   return (
     <Modal isOpen={modalAddIsOpen} setIsOpen={handleToggleAddOpenModal}>
       <ModalInputContent>
@@ -19,8 +29,11 @@ export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal}:ModalF
 
         <FormContentModal >
           <div>
-            <label htmlFor="cientifico">Nome Científico</label>
-            <input type="text" name="cientifico" placeholder="Nome Científico" />
+            <label htmlFor="cientifico">Conteúdo Farmácia</label>
+            <CKEditor 
+              editor={ ClassicEditor }
+              onChange={handleCkeditorState}
+            />
           </div>
           <Button type="submit">Adicionar Conteúdo</Button>
         </FormContentModal>

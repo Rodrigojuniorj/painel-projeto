@@ -85,7 +85,7 @@ export const FormContentModal = styled.form`
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  gap: 1rem;
+  gap: 2rem;
 
   div {
     display: flex;
@@ -93,6 +93,10 @@ export const FormContentModal = styled.form`
     gap: 0.5rem;
     width: 100%;
 
+  }
+
+  label {
+    margin-top: 0.5rem;
   }
 
   input {
@@ -103,7 +107,10 @@ export const FormContentModal = styled.form`
 
     &:focus {
       border: 1px solid ${(props) => props.theme["blue-300"]};
-
     }
   }
+`
+
+export const InputFile = styled.input`
+
 `

@@ -141,31 +141,26 @@ export function Planta() {
     setAtualiza(true);
   }
   
-  const handleImage = async (image: string, id: number) => {
+  const handleImage = async (image: string, name: string, descricao: string, id: number) => {
     const dados:PlantaDados = await Api.get(`/planta/id/${id}`)
     .then(response => {
       return response.data
     })
     .catch(err => console.log(err))
-
-    await Api.patch("/planta/atualizar", {
-      id: id,
-      dateTime: dados.dateTime,
-      imagens: [
-        ...dados.imagens,
-        image
-      ],
-      nome: dados.nome,
-      nomeCientifico: dados.nomeCientifico,
-      topicosAgro: dados.topicosAgro,
-      topicosFarmacia: dados.topicosFarmacia,
+    
+    await Api.put("/imagem/incluir", {
+      "nome": name,
+      "descricao": descricao,
+      "dados": image,
+      "plantaId": id
     })
     .then(
       (response) => {
-        toast.success('Nome popular inserido com sucesso!')
+        console.log(response)
+        toast.success('Imagem inserida com sucesso!')
       }
     )
-    .catch(err => toast.error('Erro ao inserir nome popular!')) 
+    .catch(err => console.log(err)) 
     setAtualiza(true);
   }
 
@@ -191,7 +186,7 @@ export function Planta() {
     }
     buscaDados()
   },[atualiza])
-  // console.log(content)
+  console.log(content)
   return (
     <>
       <h2>Plantas</h2>
