@@ -23,25 +23,32 @@ export const FormContentModal = styled.form`
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  gap: 1rem;
+  gap: 2rem;
 
   div {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
-
   }
 
-  input {
+  label {
+    font-weight: 800;
+  }
+
+  textarea {
+    margin-bottom: 1rem;
     width: 100%;
-    padding: 1% 2%;
+    padding: 2% 2%;
     border-radius: 4px;
     border: 1px solid ${(props) => props.theme["gray-400"]};
-
+    resize: vertical;
     &:focus {
       border: 1px solid ${(props) => props.theme["blue-300"]};
+    }
 
+    &:last-child{
+      margin-bottom: 0;
     }
   }
 `

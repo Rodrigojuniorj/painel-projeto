@@ -48,9 +48,6 @@ export const ModalInputContent = styled.div`
       text-align: center;
 
       &:last-child {
-        display: flex;
-        justify-content: center;
-        align-items: center;
       }
     }
   }
@@ -67,6 +64,7 @@ export const DeleteButton = styled.button`
   border: none;
   border: 1px solid ${(props) => props.theme["red-800"]};
   transition: all 0.5s ease-in-out;
+  margin-bottom: 1rem;
 
   &:hover{
     background: ${(props) => props.theme["red-800"]};
@@ -80,6 +78,44 @@ export const DeleteButton = styled.button`
     color: ${(props) => props.theme["red-800"]};
   }
 `
+
+const ButtonStar = styled.button`
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border: 1px solid ${(props) => props.theme["blue-500"]};
+  transition: all 0.5s ease-in-out;
+
+  &:hover{
+    background: ${(props) => props.theme["blue-500"]};
+
+    svg{
+      color: ${(props) => props.theme["white"]};
+    }
+  }
+
+  svg{
+    color: ${(props) => props.theme["blue-500"]};
+  }
+`
+
+export const StarButton = styled(ButtonStar)`
+  background: none;
+  
+`
+export const StarButtonActive = styled(ButtonStar)`
+  background: ${(props) => props.theme["blue-500"]};
+  
+  svg{
+    color: ${(props) => props.theme["white"]};
+  }
+`
+
 
 export const FormContentModal = styled.form`
   display: flex;

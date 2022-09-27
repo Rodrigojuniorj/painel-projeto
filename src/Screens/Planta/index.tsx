@@ -4,7 +4,7 @@ import { Box } from "../../components/Box";
 import { Button } from "../../components/Button";
 import { AcaoButton } from "../../components/Button/acaoButton";
 import { ModalAgro } from "../../components/Modal/ModalAgro";
-import { ModalFarmacia } from "../../components/Modal/ModalFarmacia";
+import { FarmaciaDados, ModalFarmacia } from "../../components/Modal/ModalFarmacia";
 import { ModalPlanta } from "../../components/Modal/ModalPlanta";
 import { ContainerHeader, InputSearch, PlantaList, SearchWraper } from "./styles";
 import { Api } from "../../services/api";
@@ -22,7 +22,7 @@ export interface PlantaDados {
   nome: [];
   nomeCientifico: string;
   topicosAgro: [];
-  topicosFarmacia: [];
+  topicosFarma: [];
 }
 
 const horario = new Date().toLocaleTimeString();
@@ -74,7 +74,7 @@ export function Planta() {
       nome: [],
       nomeCientifico: name,
       topicosAgro: [],
-      topicosFarmacia: [],
+      topicosFarma: [],
     })
     .then(
       (response) => {
@@ -100,7 +100,7 @@ export function Planta() {
       nome: dados.nome,
       nomeCientifico: name,
       topicosAgro: dados.topicosAgro,
-      topicosFarmacia: dados.topicosFarmacia,
+      topicosFarma: dados.topicosFarma,
       
     })
     .then(
@@ -129,8 +129,7 @@ export function Planta() {
       ],
       nomeCientifico: dados.nomeCientifico,
       topicosAgro: dados.topicosAgro,
-      topicosFarmacia: dados.topicosFarmacia,
-      
+      topicosFarma: dados.topicosFarma,
     })
     .then(
       (response) => {
@@ -141,6 +140,33 @@ export function Planta() {
     setAtualiza(true);
   }
   
+  const handleAddFarmacia = async (array: FarmaciaDados, id: number) => {
+    const dados:PlantaDados = await Api.get(`/planta/id/${id}`)
+    .then(response => {
+      return response.data
+    })
+    .catch(err => console.log(err))
+    console.log(array)
+    await Api.patch(`/planta/atualizar`, {
+      id: id,
+      dateTime: dados.dateTime,
+      imagens: dados.imagens,
+      nome: dados.nome,
+      nomeCientifico: dados.nomeCientifico,
+      topicosAgro: dados.topicosAgro,
+      topicosFarma: [ 
+        ...dados.topicosFarma,
+        array
+      ]
+    })
+    .then(
+      (response) => {
+        toast.success('Conteúdo Farmácia inserido com sucesso!')
+      }
+    )
+    .catch(err => toast.error('Erro ao inserir Conteúdo Farmácia!')) 
+  }
+
   const handleImage = async (image: string, name: string, descricao: string, id: number) => {
     const dados:PlantaDados = await Api.get(`/planta/id/${id}`)
     .then(response => {
@@ -186,6 +212,7 @@ export function Planta() {
     }
     buscaDados()
   },[atualiza])
+
   console.log(content)
   return (
     <>
@@ -225,8 +252,10 @@ export function Planta() {
                     })}</td>
                     <td>
                       <div className="escolhaTipo">
-                        <Button type="button" onClick={handleToggleAddOpenModalFarmacia} ><Pill size={16} weight="fill" />Farmácia</Button>
+                        <Button id={item.id.toString()} type="button" onClick={handleToggleAddOpenModalFarmacia} ><Pill size={16} weight="fill" />Farmácia</Button>
                         <ModalFarmacia
+                          idPlanta={item.id}
+                          handleAddFarmacia={handleAddFarmacia}
                           modalAddIsOpen={modalFarmaciaAddIsOpen}
                           handleToggleAddOpenModal={handleToggleAddOpenModalFarmacia}
                         />

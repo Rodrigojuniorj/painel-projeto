@@ -1,4 +1,4 @@
-import { X } from "phosphor-react";
+import { Star, X } from "phosphor-react";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Modal from ".";
@@ -6,7 +6,7 @@ import { PlantaDados } from "../../Screens/Planta";
 import { Api } from "../../services/api";
 import { Button } from "../Button";
 import { Imagem } from "../Imagem";
-import { DeleteButton, FormContentModal, ModalInputContent } from "./ModalPopularStyles";
+import { DeleteButton, FormContentModal, ModalInputContent, StarButton, StarButtonActive } from "./ModalPopularStyles";
 
 interface ModalFarmaciaProps {
   modalAddIsOpen: boolean;
@@ -36,6 +36,11 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
     // Selecionando o arquivo
     const file = e.target.files[0];
 
+    if(file.size > 500000) {
+      toast.error("A imagem é muito grande para ser enviada!");
+      setAtualiza(true);
+      return; 
+    }
     // Criando um objeto FileReader
     const reader = new FileReader();
 
@@ -58,26 +63,28 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
 
   function handleSubmitForm (event: FormEvent) {
     event.preventDefault();
+
+    if(nome === "" || descricao === ""){
+      toast.error("Preencha todos os campos");
+      return; 
+    }
+    if(newPicture === ""){
+      toast.error("Selecione uma imagem");
+      return;
+    }
     const splitPicture = newPicture.split(';base64,')[1]
     handleImage(splitPicture, nome, descricao, id);
+    setNome('')
+    setDescricao('')
+    setNewPicture('')
+    setAtualiza(true);
   }
 
-  async function handleDeleteImage (image: string, index: number) {
-    const dados:PlantaDados = await Api.get(`/planta/id/${id}`)
-    .then(response => {
-      return response.data
-    })
-    .catch(err => console.log(err))
-
-    const imagensAtualiza = dados.nome.filter((item: string) => item !== image);
-    await Api.patch("/planta/atualizar", {
-      id: id,
-      dateTime: dados.dateTime,
-      imagens: imagensAtualiza,
-      nome: dados.nome,
-      nomeCientifico: dados.nomeCientifico,
-      topicosAgro: dados.topicosAgro,
-      topicosFarmacia: dados.topicosFarmacia,
+  async function handleDeleteImage (id: number) {
+    await Api.delete("/imagem/remover/", {
+      data: {
+        id: id
+      }
     })
     .then(
       (response) => {
@@ -87,6 +94,32 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
     )
     .catch(err => toast.error('Erro ao remover a imagem!')) 
   }
+
+  async function handleFavoriteImage (plantaID: number) {
+    const dados:ImageProps[] = await Api.get(`/imagem/plantaid/${id}`)
+    .then(response => {
+      return response.data
+    })
+    .catch(err => console.log(err))
+    const favorita = dados.filter((item) => item.id === plantaID ? item.favorita = true : item.favorita = false)
+
+    Api.put("/imagem/incluir", {
+      "nome": favorita[0].nome,
+      "descricao": favorita[0].descricao,
+      "dados": favorita[0].dados,
+      "favorita": favorita[0].favorita,
+      "plantaId": id,
+      "id": plantaID 
+    })
+    .then(
+      (response) => {
+        toast.success('Imagem favoritada com sucesso!')
+        setAtualiza(true);
+      }
+    )
+    .catch(err => toast.error('Erro ao favoritar a imagem!')) 
+  }
+
 
   useEffect(() => {
     async function buscaDados() {
@@ -99,7 +132,7 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
     }
     buscaDados()
   },[id, atualiza])
-
+  // console.log(imageArray)
   return (
     <Modal isOpen={modalAddIsOpen} setIsOpen={() => handleToggleAddOpenModal(id)}>
       <ModalInputContent>
@@ -110,15 +143,16 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
 
         <FormContentModal onSubmit={handleSubmitForm} >
           <div>
-            <label htmlFor="">Nome</label>
-            <input type="text" value={nome} name="nome" placeholder='Nome da imagem' onChange={e => setNome(e.target.value)} />
-            <label htmlFor="">Descricao</label>
-            <input type="text" value={descricao} name="descricao" placeholder='Descricao da imagem' onChange={e => setDescricao(e.target.value)} />
-            <label htmlFor="cientifico">Nome popular</label>
+            <label htmlFor="">Nome (Obrigatório)*</label>
+            <input type="text" value={nome} name="nome" required placeholder='Nome da imagem' onChange={e => setNome(e.target.value)} />
+            <label htmlFor="">Descricao (Obrigatório)*</label>
+            <input type="text" value={descricao} name="descricao" required placeholder='Descricao da imagem' onChange={e => setDescricao(e.target.value)} />
+            <label htmlFor="cientifico">Imagem (Obrigatório)*</label>
             <input
               type="file"
               name="profile"
               accept="image/*"
+              key={atualiza ? '1' : '2'}
               onChange={(e) => handleProfile(e)}
             />
           </div>
@@ -128,8 +162,9 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
           <thead>
             <tr>
               <th>Nome</th>
+              <th>Descricao</th>
               <th>Image</th>
-              <th>Deletar</th>
+              <th>Ação</th>
             </tr>
           </thead>
           { imageArray ? (
@@ -137,8 +172,16 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
                 {imageArray.map((item, index) => (
                   <tr key={item.id}>
                     <td>{item.nome}</td>
+                    <td>{item.descricao}</td>
                     <td><Imagem dados={item.dados} /></td>
-                    <td><DeleteButton onClick={() => handleDeleteImage(item.dados, index)} ><X size={18} weight="fill" /></DeleteButton></td>
+                    <td>
+                      <DeleteButton onClick={() => handleDeleteImage(item.id)} ><X size={18} weight="fill" /></DeleteButton>
+                      {item.favorita ? (
+                        <StarButtonActive onClick={() => handleFavoriteImage(item.id)} ><Star size={18} weight="fill" /></StarButtonActive>
+                      ) : (
+                        <StarButton onClick={() => handleFavoriteImage(item.id)} ><Star size={18} weight="fill" /></StarButton>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
