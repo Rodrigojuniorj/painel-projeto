@@ -73,11 +73,11 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
       return;
     }
     const splitPicture = newPicture.split(';base64,')[1]
+    setAtualiza(true);
     handleImage(splitPicture, nome, descricao, id);
     setNome('')
     setDescricao('')
     setNewPicture('')
-    setAtualiza(true);
   }
 
   async function handleDeleteImage (id: number) {
@@ -95,44 +95,37 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
     .catch(err => toast.error('Erro ao remover a imagem!')) 
   }
 
-  async function handleFavoriteImage (plantaID: number) {
-    const dados:ImageProps[] = await Api.get(`/imagem/plantaid/${id}`)
-    .then(response => {
-      return response.data
-    })
-    .catch(err => console.log(err))
-    const favorita = dados.filter((item) => item.id === plantaID ? item.favorita = true : item.favorita = false)
-
-    Api.put("/imagem/incluir", {
-      "nome": favorita[0].nome,
-      "descricao": favorita[0].descricao,
-      "dados": favorita[0].dados,
-      "favorita": favorita[0].favorita,
-      "plantaId": id,
-      "id": plantaID 
-    })
-    .then(
-      (response) => {
-        toast.success('Imagem favoritada com sucesso!')
-        setAtualiza(true);
-      }
-    )
-    .catch(err => toast.error('Erro ao favoritar a imagem!')) 
+  async function handleFavoriteImage (imageId: number) {
+      
+      await Api.patch("/imagem/favorita/", {
+        "imgid": imageId,
+        "plantaid": id,
+      })
+      .then(
+        (response) => {
+          toast.success('Imagem favoritada com sucesso!')
+          setAtualiza(true);
+        }
+      )
+      .catch(err =>
+        console.log(err) 
+        // toast.error('Erro ao favoritar a imagem!')
+      ); 
   }
 
+  async function buscaDados() {
+    await Api.get(`imagem/plantaid/${id}`)
+    .then(response => {
+      setImageArray(response.data)
+      setAtualiza(false);
+    })
+    .catch(error => console.log(error))
+  }
 
   useEffect(() => {
-    async function buscaDados() {
-      await Api.get(`imagem/plantaid/${id}`)
-      .then(response => {
-        setImageArray(response.data)
-        setAtualiza(false);
-      })
-      .catch(error => console.log(error))
-    }
     buscaDados()
   },[id, atualiza])
-  // console.log(imageArray)
+
   return (
     <Modal isOpen={modalAddIsOpen} setIsOpen={() => handleToggleAddOpenModal(id)}>
       <ModalInputContent>

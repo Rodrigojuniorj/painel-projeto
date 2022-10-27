@@ -150,3 +150,9 @@ export const FormContentModal = styled.form`
 export const InputFile = styled.input`
 
 `
+
+export const WraperButton = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`

@@ -44,4 +44,20 @@ export const FormContentModal = styled.form`
 
     }
   }
+
+  textarea {
+    margin-bottom: 1rem;
+    width: 100%;
+    padding: 2% 2%;
+    border-radius: 4px;
+    border: 1px solid ${(props) => props.theme["gray-400"]};
+    resize: vertical;
+    &:focus {
+      border: 1px solid ${(props) => props.theme["blue-300"]};
+    }
+
+    &:last-child{
+      margin-bottom: 0;
+    }
+  }
 `

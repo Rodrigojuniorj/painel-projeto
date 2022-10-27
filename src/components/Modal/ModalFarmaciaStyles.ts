@@ -52,3 +52,40 @@ export const FormContentModal = styled.form`
     }
   }
 `
+
+const ButtonCicle = styled.button`
+  width: 30px;
+  height: 30px; 
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => props.theme.white};
+`
+
+export const ButtonAddCicle = styled(ButtonCicle)`
+  background: ${(props) => props.theme["green-500"]};
+`
+
+export const ButtonDeleteCicle = styled(ButtonCicle)`
+  background: ${(props) => props.theme["red-500"]};
+`
+
+export const ButtonWraper = styled.div`
+  display: flex;
+  flex-direction: row !important;
+  justify-content: space-between;
+  align-items: center;
+
+  label {
+    display: block;
+  }
+
+  div {
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+`

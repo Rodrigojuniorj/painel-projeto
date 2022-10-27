@@ -13,6 +13,7 @@ export const defaultTheme = {
   'gray-850': '#212529',
   'gray-900': '#121214',
 
+  'green-100': '#D1E7DD',
   'green-300': '#00B37E',
   'green-500': '#00875F',
   'green-700': '#015F43',
@@ -26,6 +27,7 @@ export const defaultTheme = {
   'sidebar-text-hover': '#1dc4e9',
   'header-color': '#2D394B',
 
+  'red-300': '#F8D7DA',
   'red-500': '#AB222E',
   'red-700': '#7A1921',
   'red-800': '#f44236',

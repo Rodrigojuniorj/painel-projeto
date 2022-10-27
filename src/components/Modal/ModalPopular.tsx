@@ -5,7 +5,7 @@ import Modal from ".";
 import { PlantaDados } from "../../Screens/Planta";
 import { Api } from "../../services/api";
 import { Button } from "../Button";
-import { DeleteButton, FormContentModal, ModalInputContent } from "./ModalPopularStyles";
+import { DeleteButton, FormContentModal, ModalInputContent, WraperButton } from "./ModalPopularStyles";
 
 interface ModalFarmaciaProps {
   modalAddIsOpen: boolean;
@@ -42,8 +42,8 @@ export function ModalPopular({ modalAddIsOpen, handleToggleAddOpenModal, id, han
       imagens: dados.imagens,
       nome: namePopular,
       nomeCientifico: dados.nomeCientifico,
-      topicosAgro: dados.topicosAgro,
-      topicosFarmacia: dados.topicosFarmacia,
+      agroDados: dados.agroDados,
+      farmaciaDados: dados.farmaciaDados,
       
     })
     .then(
@@ -59,7 +59,6 @@ export function ModalPopular({ modalAddIsOpen, handleToggleAddOpenModal, id, han
     async function buscaDados() {
       await Api.get(`/planta/id/${id}`)
       .then(response => {
-        console.log(response.data)
         setPopularArray(response.data.nome)
         setAtualiza(false);
       })
@@ -95,7 +94,7 @@ export function ModalPopular({ modalAddIsOpen, handleToggleAddOpenModal, id, han
                 {popularArray.map((item, index) => (
                   <tr key={item}>
                     <td>{item}</td>
-                    <td><DeleteButton onClick={() => handleDeleteNamePopular(item, index)} ><X size={18} weight="fill" /></DeleteButton></td>
+                    <td><WraperButton><DeleteButton onClick={() => handleDeleteNamePopular(item, index)} ><X size={18} weight="fill" /></DeleteButton></WraperButton></td>
                   </tr>
                 ))}
               </tbody>

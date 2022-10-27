@@ -1,7 +1,7 @@
-import { X } from "phosphor-react";
+import { Plus, Trash, X } from "phosphor-react";
 import Modal from ".";
 import { Button } from "../Button";
-import { FormContentModal, ModalInputContent } from "./ModalFarmaciaStyles";
+import { ButtonAddCicle, ButtonDeleteCicle, ButtonWraper,FormContentModal, ModalInputContent } from "./ModalFarmaciaStyles";
 import { FormEvent, useEffect, useState } from "react";
 import { Api } from "../../services/api";
 
@@ -16,37 +16,79 @@ export type FarmaciaDados = {
   utilizacao: string;
   terapeutico: string;
   contraindicacao: string;
-  modoDeUsar: string;
+  modoDeUsar: string[];
 }
 
 export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlanta, handleAddFarmacia}:ModalFarmaciaProps){
   const [utilizacao, setUtilizacao] = useState('');
   const [terapeutico, setTerapeutico] = useState('');
+  const [beneficio, setBeneficio] = useState('');
   const [contraindicacao, setContraindicacao] = useState('');
-  const [modoDeUsar, setModoDeUsar] = useState('');
-  const [farmaArray, setFarmaArray] = useState<FarmaciaDados[]>([]);
-  const [atualiza, setAtualiza] = useState(true);
+  const [atualiza, setAtualiza] = useState(false);
+
+  const valueBase = {description: ''};
+  const [modoDeUso, setModoDeUso] = useState([{...valueBase}]);
+
+  const handleAdd = (event: FormEvent) => {
+    event.preventDefault();
+    setModoDeUso(state => [...state, {... valueBase}]);
+  }
+
+  const handleChange = (e:any, ix:any, event: FormEvent) => {
+    event.preventDefault();
+    
+    const {name, value} = e.target;
+    let values: any = [...modoDeUso];
+    values[ix][name] = value;
+    setModoDeUso(state => [...values]);
+  }
+  
+  const handleDelete = (event: FormEvent, ix:any) => {
+    event.preventDefault();
+
+    let values = modoDeUso.filter((a, b) => {    
+      if (b !== ix) {
+        return a;
+      }
+    });
+    setModoDeUso(state => [...values]);    
+  }
 
   function handleSubmitForm (event: FormEvent) {
     event.preventDefault();
 
     const dados ={
       utilizacao,
+      beneficios: beneficio,
       terapeutico,
       contraindicacao,
-      modoDeUsar
+      modoDeUsar: modoDeUso.map((item) => item.description)
     }
 
     handleAddFarmacia(dados, idPlanta);
-    setAtualiza(true);
+    setAtualiza(true);  
+    handleToggleAddOpenModal();
+  }
+
+  async function buscaDados() {
+    const response = await Api.get(`/planta/id/${idPlanta}`);
+    const dados = response.data.farmaciaDados;
+
+    setUtilizacao(dados.utilizacao);
+    setTerapeutico(dados.terapeutico);
+    setContraindicacao(dados.contraindicacao);
+    if(dados.modoDeUsar.length > 0) {
+      const modoDeUsar = dados.modoDeUsar.map((item: any) => {
+        return {description: item}
+      })
+
+      setModoDeUso(modoDeUsar);
+    }
   }
 
   useEffect(() => {
-    async function buscaDados() {
-      const response = await Api.get(`/planta/id/${idPlanta}`)
-      .then(response => console.log(response.data.topicosFarma));
-    }
     buscaDados()
+    setAtualiza(false);
   },[atualiza])
 
   return (
@@ -61,12 +103,27 @@ export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlan
           <div>
             <label htmlFor="cientifico">Utilização:</label>
             <textarea name="cientifico" id="cientifico" rows={5} value={utilizacao} onChange={event => setUtilizacao(event.target.value)}></textarea>
+            <label htmlFor="beneficios">Benefícios:</label>
+            <textarea name="beneficios" id="beneficios" rows={5} value={beneficio} onChange={event => setBeneficio(event.target.value)}></textarea>
             <label htmlFor="terapeuticos">Efeitos terapêuticos:</label>
             <textarea name="terapeuticos" id="terapeuticos" rows={5} value={terapeutico} onChange={event => setTerapeutico(event.target.value)}></textarea>
             <label htmlFor="contraindicacoes">Contraindicação:</label>
             <textarea name="contraindicacoes" id="contraindicacoes" rows={5} value={contraindicacao} onChange={event => setContraindicacao(event.target.value)}></textarea>
-            <label htmlFor="modoDeUsar">Modo de Usar:</label>
-            <textarea name="modoDeUsar" id="modoDeUsar" rows={5} value={modoDeUsar} onChange={event => setModoDeUsar(event.target.value)}></textarea>
+           
+            {modoDeUso.map((ing, ix) => 
+            (
+              <>
+                <ButtonWraper>
+                  <label htmlFor="modoDeUsar">Modo de Usar:</label>
+                  <div>
+                    {ix !== 0 && <ButtonDeleteCicle onClick={e => handleDelete(e,ix)}><Trash size={20} /></ButtonDeleteCicle>}
+                    <ButtonAddCicle onClick={handleAdd}><Plus size={20}  /></ButtonAddCicle>
+                  </div>
+                </ButtonWraper>
+                <textarea name="description" rows={5} value={ing.description} onChange={event => handleChange(event, ix, event)}></textarea>
+              </>
+            ))}
+
           </div>
           <Button type="submit" onClick={handleSubmitForm}>Adicionar Conteúdo</Button>
         </FormContentModal>

@@ -3,7 +3,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Box } from "../../components/Box";
 import { Button } from "../../components/Button";
 import { AcaoButton } from "../../components/Button/acaoButton";
-import { ModalAgro } from "../../components/Modal/ModalAgro";
+import { AgroDados, ModalAgro } from "../../components/Modal/ModalAgro";
 import { FarmaciaDados, ModalFarmacia } from "../../components/Modal/ModalFarmacia";
 import { ModalPlanta } from "../../components/Modal/ModalPlanta";
 import { ContainerHeader, InputSearch, PlantaList, SearchWraper } from "./styles";
@@ -21,8 +21,8 @@ export interface PlantaDados {
   imagens: [];
   nome: [];
   nomeCientifico: string;
-  topicosAgro: [];
-  topicosFarma: [];
+  agroDados: [];
+  farmaciaDados: [];
 }
 
 const horario = new Date().toLocaleTimeString();
@@ -73,8 +73,8 @@ export function Planta() {
       imagens: [],
       nome: [],
       nomeCientifico: name,
-      topicosAgro: [],
-      topicosFarma: [],
+      agroDados: null,
+      farmaciaDados: null,
     })
     .then(
       (response) => {
@@ -99,8 +99,8 @@ export function Planta() {
       imagens: dados.imagens,
       nome: dados.nome,
       nomeCientifico: name,
-      topicosAgro: dados.topicosAgro,
-      topicosFarma: dados.topicosFarma,
+      agroDados: dados.agroDados,
+      farmaciaDados: dados.farmaciaDados,
       
     })
     .then(
@@ -128,8 +128,8 @@ export function Planta() {
         name
       ],
       nomeCientifico: dados.nomeCientifico,
-      topicosAgro: dados.topicosAgro,
-      topicosFarma: dados.topicosFarma,
+      agroDados: dados.agroDados,
+      farmaciaDados: dados.farmaciaDados,
     })
     .then(
       (response) => {
@@ -146,18 +146,15 @@ export function Planta() {
       return response.data
     })
     .catch(err => console.log(err))
-    console.log(array)
+
     await Api.patch(`/planta/atualizar`, {
       id: id,
       dateTime: dados.dateTime,
       imagens: dados.imagens,
       nome: dados.nome,
       nomeCientifico: dados.nomeCientifico,
-      topicosAgro: dados.topicosAgro,
-      topicosFarma: [ 
-        ...dados.topicosFarma,
-        array
-      ]
+      agroDados: dados.agroDados,
+      farmaciaDados: array
     })
     .then(
       (response) => {
@@ -165,6 +162,29 @@ export function Planta() {
       }
     )
     .catch(err => toast.error('Erro ao inserir Conteúdo Farmácia!')) 
+  }
+
+  const handleAddAgro = async (array: AgroDados, id: number) => {
+    const dados:PlantaDados = await Api.get(`/planta/id/${id}`)
+    .then(response => {
+      return response.data
+    })
+    .catch(err => console.log(err))
+    await Api.patch(`/planta/atualizar`, {
+      id: id,
+      dateTime: dados.dateTime,
+      imagens: dados.imagens,
+      nome: dados.nome,
+      nomeCientifico: dados.nomeCientifico,
+      agroDados: array,
+      farmaciaDados: dados.farmaciaDados
+    })
+    .then(
+      (response) => {
+        toast.success('Conteúdo Agronomia inserido com sucesso!')
+      }
+    )
+    .catch(err => toast.error('Erro ao inserir Conteúdo Agronomia!')) 
   }
 
   const handleImage = async (image: string, name: string, descricao: string, id: number) => {
@@ -182,7 +202,6 @@ export function Planta() {
     })
     .then(
       (response) => {
-        console.log(response)
         toast.success('Imagem inserida com sucesso!')
       }
     )
@@ -204,15 +223,16 @@ export function Planta() {
     setAtualiza(true);
   }
 
+  async function buscaDados() {
+    const response = await Api.get("/planta/");
+    setContent(response.data);
+    setAtualiza(false);
+  }
+  
   useEffect(() => {
-    async function buscaDados() {
-      const response = await Api.get("/planta/");
-      setContent(response.data);
-      setAtualiza(false);
-    }
     buscaDados()
+    setAtualiza(false);
   },[atualiza])
-
   console.log(content)
   return (
     <>
@@ -220,7 +240,7 @@ export function Planta() {
       <Box size={1}>
         <ContainerHeader>
           <div>
-            <Button onClick={handleToggleAddOpenModal} type="button">Adicionar conteudo</Button>
+            <Button onClick={handleToggleAddOpenModal} type="button">Adicionar planta</Button>
           </div>
           <ModalPlanta
             handleNameCientifico={handleAddNameCientifico}
@@ -262,6 +282,8 @@ export function Planta() {
                         
                         <Button type="button" onClick={handleToggleAddOpenModalAgronomia}><Tree size={16} weight="fill" />Agronomia</Button>
                         <ModalAgro
+                          idPlanta={item.id}
+                          handleAddAgro={handleAddAgro}
                           modalAddIsOpen={modalAgronomiaAddIsOpen}
                           handleToggleAddOpenModal={handleToggleAddOpenModalAgronomia}
                         />
