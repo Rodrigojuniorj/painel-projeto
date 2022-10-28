@@ -90,7 +90,7 @@ export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlan
     buscaDados()
     setAtualiza(false);
   },[atualiza])
-
+  
   return (
     <Modal isOpen={modalAddIsOpen} setIsOpen={handleToggleAddOpenModal}>
       <ModalInputContent>

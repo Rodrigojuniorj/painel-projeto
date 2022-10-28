@@ -41,6 +41,7 @@ export function ModalPopular({ modalAddIsOpen, handleToggleAddOpenModal, id, han
       dateTime: dados.dateTime,
       imagens: dados.imagens,
       nome: namePopular,
+      videos: dados.videos,
       nomeCientifico: dados.nomeCientifico,
       agroDados: dados.agroDados,
       farmaciaDados: dados.farmaciaDados,

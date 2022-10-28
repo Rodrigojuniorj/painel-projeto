@@ -12,7 +12,7 @@ interface ModalFarmaciaProps {
   modalAddIsOpen: boolean;
   id: number;
   handleToggleAddOpenModal: (id: number) => void;
-  handleImage: (image: string, name: string, descricao: string, plantaId: number) => void;
+  handleImage: (image: string, name: string, descricao: string, plantaId: number) => Promise<boolean>;
 }
 
 export interface ImageProps {
@@ -31,6 +31,7 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
 
   const [imageArray, setImageArray] = useState<ImageProps[]>([]);
   const [atualiza, setAtualiza] = useState(false);
+  const [recebePromisse, setRecebePromisse] = useState(false);
 
   const handleProfile = (e: any) => {
     // Selecionando o arquivo
@@ -73,8 +74,9 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
       return;
     }
     const splitPicture = newPicture.split(';base64,')[1]
-    setAtualiza(true);
-    handleImage(splitPicture, nome, descricao, id);
+    handleImage(splitPicture, nome, descricao, id)
+    .then((response) => setAtualiza(true))
+    
     setNome('')
     setDescricao('')
     setNewPicture('')
@@ -117,7 +119,7 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
     await Api.get(`imagem/plantaid/${id}`)
     .then(response => {
       setImageArray(response.data)
-      setAtualiza(false);
+      setAtualiza(false)
     })
     .catch(error => console.log(error))
   }
@@ -126,6 +128,7 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
     buscaDados()
   },[id, atualiza])
 
+  console.log(imageArray)
   return (
     <Modal isOpen={modalAddIsOpen} setIsOpen={() => handleToggleAddOpenModal(id)}>
       <ModalInputContent>

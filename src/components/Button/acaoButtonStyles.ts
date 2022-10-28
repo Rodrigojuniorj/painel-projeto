@@ -80,3 +80,20 @@ export const PopularButton = styled(CicleButton)`
     color: ${(props) => props.theme["yellow-300"]};
   }
 `
+
+export const VideoButton = styled(CicleButton)`
+  border: 1px solid ${(props) => props.theme["purple-300"]};
+  transition: all 0.5s ease-in-out;
+
+  &:hover{
+    background: ${(props) => props.theme["purple-300"]};
+
+    svg{
+      color: ${(props) => props.theme["white"]};
+    }
+  }
+
+  svg{
+    color: ${(props) => props.theme["purple-300"]};
+  }
+`

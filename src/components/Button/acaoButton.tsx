@@ -1,17 +1,18 @@
 import { ReactNode } from "react";
-import { EditButton, DeleteButton, PhotographyButton, PopularButton } from "./acaoButtonStyles";
+import { EditButton, DeleteButton, PhotographyButton, PopularButton, VideoButton } from "./acaoButtonStyles";
 
 interface AcaoButtonProps {
   children: ReactNode;
-  mod: "edit" | "delete" | "photography" | "popular";
+  mod: "edit" | "delete" | "photography" | "popular" | "video";
   id: string | undefined;
   handleDeletebutton?: (id: number) => void;
   handleOpenModalPopular?: (id: number) => void;
   handleOpenModalEdit?: (id: number) => void;
+  handleOpenModalVideo?: (id: number) => void;
   handleOpenModalImage?: (id: number) => void;
 }
 
-export function AcaoButton({ children, mod, id, handleDeletebutton, handleOpenModalPopular, handleOpenModalEdit, handleOpenModalImage }:AcaoButtonProps) {
+export function AcaoButton({ children, mod, id, handleDeletebutton, handleOpenModalPopular, handleOpenModalEdit, handleOpenModalImage, handleOpenModalVideo }:AcaoButtonProps) {
 
   function handleDelete (id: string) {
     handleDeletebutton(parseInt(id));
@@ -29,6 +30,10 @@ export function AcaoButton({ children, mod, id, handleDeletebutton, handleOpenMo
     handleOpenModalImage(parseInt(id));
   }
 
+  function handleModalVideo (id: string) {
+    handleOpenModalVideo(parseInt(id));
+  }
+
   return (
     mod === "edit" ? (
       <EditButton type="button" id={id} onClick={() => handleModalAtualiza(id)} >
@@ -42,10 +47,14 @@ export function AcaoButton({ children, mod, id, handleDeletebutton, handleOpenMo
       <PhotographyButton id={id} onClick={() => handleModalImage(id)} >
         {children}
       </PhotographyButton>
-    ) : (
+    ) : mod === 'popular' ? (
       <PopularButton id={id} onClick={() => handleModalPopular(id)}>
         {children}
       </PopularButton>
+    ) : (
+      <VideoButton id={id} onClick={() => handleModalVideo(id)}>
+        {children}
+      </VideoButton>
     )
   );
 }

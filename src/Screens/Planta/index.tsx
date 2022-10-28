@@ -1,4 +1,4 @@
-import { Camera, Leaf, MagnifyingGlass, NotePencil, Pill, Trash, Tree, X } from "phosphor-react";
+import { Camera, Leaf, MagnifyingGlass, NotePencil, Pill, Trash, Tree, X, YoutubeLogo } from "phosphor-react";
 import { FormEvent, useEffect, useState } from "react";
 import { Box } from "../../components/Box";
 import { Button } from "../../components/Button";
@@ -14,15 +14,24 @@ import { toast } from "react-toastify";
 import { ModalPopular } from "../../components/Modal/ModalPopular";
 import { ModalAtualiza } from "../../components/Modal/ModalAtualiza";
 import { ModalImage } from "../../components/Modal/ModalImage";
+import { ModalVideo } from "../../components/Modal/ModalVideo";
 
 export interface PlantaDados {
   id: number;
   dateTime: Date;
   imagens: [];
   nome: [];
+  videos: [];
   nomeCientifico: string;
   agroDados: [];
   farmaciaDados: [];
+}
+
+export interface VideoDados {
+  id?: number;
+  nome: string;
+  url: string;
+  curso: boolean;
 }
 
 const horario = new Date().toLocaleTimeString();
@@ -32,6 +41,7 @@ export function Planta() {
   const [modalFarmaciaAddIsOpen, setModalFarmaciaAddIsOpen] = useState(false)
   const [modalAgronomiaAddIsOpen, setModalAgronomiaAddIsOpen] = useState(false)
   const [modalPopularAddIsOpen, setModalPopularAddIsOpen] = useState(false)
+  const [modalVideoAddIsOpen, setModalVideoAddIsOpen] = useState(false)
   const [modalAtualizaAddIsOpen, setModalAtualizaAddIsOpen] = useState(false)
   const [modalImageAddIsOpen, setModalImageAddIsOpen] = useState(false)
 
@@ -56,6 +66,11 @@ export function Planta() {
     setModalPopularAddIsOpen(!modalPopularAddIsOpen)
   }
   
+  const handleToggleAddOpenModalVideo = async (id: number) => {
+    setIdClick(id)
+    setModalVideoAddIsOpen(!modalVideoAddIsOpen)
+  }
+  
   const handleToggleAddOpenModalImage = async (id: number) => {
     setIdClick(id)
     setModalImageAddIsOpen(!modalImageAddIsOpen)
@@ -72,6 +87,7 @@ export function Planta() {
       dateTime: '',
       imagens: [],
       nome: [],
+      videos: [],
       nomeCientifico: name,
       agroDados: null,
       farmaciaDados: null,
@@ -98,6 +114,7 @@ export function Planta() {
       dateTime: dados.dateTime,
       imagens: dados.imagens,
       nome: dados.nome,
+      videos: dados.videos,
       nomeCientifico: name,
       agroDados: dados.agroDados,
       farmaciaDados: dados.farmaciaDados,
@@ -127,6 +144,7 @@ export function Planta() {
         ...dados.nome,
         name
       ],
+      videos: dados.videos,
       nomeCientifico: dados.nomeCientifico,
       agroDados: dados.agroDados,
       farmaciaDados: dados.farmaciaDados,
@@ -139,7 +157,33 @@ export function Planta() {
     .catch(err => toast.error('Erro ao inserir nome popular!')) 
     setAtualiza(true);
   }
-  
+
+  const handleAddVideo = async (array: VideoDados, id: number) => {
+    const dados:PlantaDados = await Api.get(`/planta/id/${id}`)
+    .then(response => {
+      return response.data
+    })
+    .catch(err => console.log(err))
+
+    await Api.patch("/planta/atualizar", {
+      id: id,
+      dateTime: dados.dateTime,
+      imagens: dados.imagens,
+      nome: dados.nome,
+      videos: [...dados.videos, array],
+      nomeCientifico: dados.nomeCientifico,
+      agroDados: dados.agroDados,
+      farmaciaDados: dados.farmaciaDados,
+    })
+    .then(
+      (response) => {
+        toast.success('Vídeo adicionado com sucesso!')
+      }
+    )
+    .catch(err => toast.error('Erro ao inserir o vídeo!')) 
+    setAtualiza(true);
+  }
+
   const handleAddFarmacia = async (array: FarmaciaDados, id: number) => {
     const dados:PlantaDados = await Api.get(`/planta/id/${id}`)
     .then(response => {
@@ -152,6 +196,7 @@ export function Planta() {
       dateTime: dados.dateTime,
       imagens: dados.imagens,
       nome: dados.nome,
+      videos: dados.videos,
       nomeCientifico: dados.nomeCientifico,
       agroDados: dados.agroDados,
       farmaciaDados: array
@@ -175,6 +220,7 @@ export function Planta() {
       dateTime: dados.dateTime,
       imagens: dados.imagens,
       nome: dados.nome,
+      videos: dados.videos,
       nomeCientifico: dados.nomeCientifico,
       agroDados: array,
       farmaciaDados: dados.farmaciaDados
@@ -194,7 +240,7 @@ export function Planta() {
     })
     .catch(err => console.log(err))
     
-    await Api.put("/imagem/incluir", {
+    const teste = await Api.put("/imagem/incluir", {
       "nome": name,
       "descricao": descricao,
       "dados": image,
@@ -203,10 +249,14 @@ export function Planta() {
     .then(
       (response) => {
         toast.success('Imagem inserida com sucesso!')
+        return true
       }
     )
-    .catch(err => console.log(err)) 
-    setAtualiza(true);
+    .catch(err => {
+      console.log(err)
+    }) 
+
+    return teste
   }
 
   const handleDeletePlanta = async (id: number) => {
@@ -233,7 +283,7 @@ export function Planta() {
     buscaDados()
     setAtualiza(false);
   },[atualiza])
-  console.log(content)
+
   return (
     <>
       <h2>Plantas</h2>
@@ -311,6 +361,13 @@ export function Planta() {
                           handleNamePopular={handleAddNamePopular}
                           modalAddIsOpen={modalPopularAddIsOpen}
                           handleToggleAddOpenModal={handleToggleAddOpenModalPopular}
+                        />
+                        <AcaoButton mod="video" id={item.id.toString()} handleOpenModalVideo={handleToggleAddOpenModalVideo} ><YoutubeLogo size={18} weight="fill" /></AcaoButton>
+                        <ModalVideo
+                          id={idClick}
+                          handleNameVideo={handleAddVideo}
+                          modalAddIsOpen={modalVideoAddIsOpen}
+                          handleToggleAddOpenModal={handleToggleAddOpenModalVideo}
                         />
                         <AcaoButton mod="delete" id={item.id.toString()} handleDeletebutton={handleDeletePlanta} ><Trash size={18} weight="fill" /></AcaoButton>
                       </div>
