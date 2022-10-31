@@ -165,7 +165,7 @@ export function Planta() {
     })
     .catch(err => console.log(err))
 
-    await Api.patch("/planta/atualizar", {
+    const video = await Api.patch("/planta/atualizar", {
       id: id,
       dateTime: dados.dateTime,
       imagens: dados.imagens,
@@ -178,10 +178,12 @@ export function Planta() {
     .then(
       (response) => {
         toast.success('Vídeo adicionado com sucesso!')
+        return 'adicionado'
       }
     )
     .catch(err => toast.error('Erro ao inserir o vídeo!')) 
     setAtualiza(true);
+    return video
   }
 
   const handleAddFarmacia = async (array: FarmaciaDados, id: number) => {
@@ -191,6 +193,7 @@ export function Planta() {
     })
     .catch(err => console.log(err))
 
+    console.log(array)
     await Api.patch(`/planta/atualizar`, {
       id: id,
       dateTime: dados.dateTime,
@@ -283,6 +286,7 @@ export function Planta() {
     buscaDados()
     setAtualiza(false);
   },[atualiza])
+  console.log(content)
 
   return (
     <>

@@ -12,7 +12,7 @@ interface ModalFarmaciaProps {
   modalAddIsOpen: boolean;
   handleToggleAddOpenModal: (id: number) => void;
   id: number;
-  handleNameVideo: (dados: VideoDados, id: number) => void;
+  handleNameVideo: (dados: VideoDados, id: number) => Promise<string>;
 }
 
 export function ModalVideo({ modalAddIsOpen, handleToggleAddOpenModal, id, handleNameVideo}:ModalFarmaciaProps){
@@ -32,8 +32,7 @@ export function ModalVideo({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
       curso
     }
 
-    handleNameVideo(dados, id);
-    setAtualiza(!atualiza);
+    handleNameVideo(dados, id).then(() => setAtualiza(true));
     setNome("");
     setUrl("");
     setCurso(false);

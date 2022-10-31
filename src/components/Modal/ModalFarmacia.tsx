@@ -16,14 +16,17 @@ export type FarmaciaDados = {
   utilizacao: string;
   terapeutico: string;
   contraindicacao: string;
+  beneficios: string;
+  fonte: string;
   modoDeUsar: string[];
 }
 
 export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlanta, handleAddFarmacia}:ModalFarmaciaProps){
   const [utilizacao, setUtilizacao] = useState('');
   const [terapeutico, setTerapeutico] = useState('');
-  const [beneficio, setBeneficio] = useState('');
+  const [beneficios, setbeneficioss] = useState('');
   const [contraindicacao, setContraindicacao] = useState('');
+  const [fonte, setFonte] = useState('');
   const [atualiza, setAtualiza] = useState(false);
 
   const valueBase = {description: ''};
@@ -59,9 +62,10 @@ export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlan
 
     const dados ={
       utilizacao,
-      beneficios: beneficio,
+      beneficios,
       terapeutico,
       contraindicacao,
+      fonte,
       modoDeUsar: modoDeUso.map((item) => item.description)
     }
 
@@ -90,7 +94,7 @@ export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlan
     buscaDados()
     setAtualiza(false);
   },[atualiza])
-  
+
   return (
     <Modal isOpen={modalAddIsOpen} setIsOpen={handleToggleAddOpenModal}>
       <ModalInputContent>
@@ -104,11 +108,13 @@ export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlan
             <label htmlFor="cientifico">Utilização:</label>
             <textarea name="cientifico" id="cientifico" rows={5} value={utilizacao} onChange={event => setUtilizacao(event.target.value)}></textarea>
             <label htmlFor="beneficios">Benefícios:</label>
-            <textarea name="beneficios" id="beneficios" rows={5} value={beneficio} onChange={event => setBeneficio(event.target.value)}></textarea>
+            <textarea name="beneficios" id="beneficios" rows={5} value={beneficios} onChange={event => setbeneficioss(event.target.value)}></textarea>
             <label htmlFor="terapeuticos">Efeitos terapêuticos:</label>
             <textarea name="terapeuticos" id="terapeuticos" rows={5} value={terapeutico} onChange={event => setTerapeutico(event.target.value)}></textarea>
             <label htmlFor="contraindicacoes">Contraindicação:</label>
             <textarea name="contraindicacoes" id="contraindicacoes" rows={5} value={contraindicacao} onChange={event => setContraindicacao(event.target.value)}></textarea>
+            <label htmlFor="fonte">Referência:</label>
+            <textarea name="fonte" id="fonte" rows={5} value={fonte} onChange={event => setFonte(event.target.value)}></textarea>
            
             {modoDeUso.map((ing, ix) => 
             (
