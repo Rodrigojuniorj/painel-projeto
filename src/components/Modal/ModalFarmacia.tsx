@@ -24,7 +24,7 @@ export type FarmaciaDados = {
 export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlanta, handleAddFarmacia}:ModalFarmaciaProps){
   const [utilizacao, setUtilizacao] = useState('');
   const [terapeutico, setTerapeutico] = useState('');
-  const [beneficios, setbeneficioss] = useState('');
+  const [beneficios, setBeneficios] = useState('');
   const [contraindicacao, setContraindicacao] = useState('');
   const [fonte, setFonte] = useState('');
   const [atualiza, setAtualiza] = useState(false);
