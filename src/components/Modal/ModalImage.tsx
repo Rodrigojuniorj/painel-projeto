@@ -121,14 +121,13 @@ export function ModalImage({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
       setImageArray(response.data)
       setAtualiza(false)
     })
-    .catch(error => console.log(error))
+    .catch(error => (error))
   }
 
   useEffect(() => {
     buscaDados()
   },[id, atualiza])
 
-  console.log(imageArray)
   return (
     <Modal isOpen={modalAddIsOpen} setIsOpen={() => handleToggleAddOpenModal(id)}>
       <ModalInputContent>

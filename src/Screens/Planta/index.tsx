@@ -15,6 +15,7 @@ import { ModalPopular } from "../../components/Modal/ModalPopular";
 import { ModalAtualiza } from "../../components/Modal/ModalAtualiza";
 import { ModalImage } from "../../components/Modal/ModalImage";
 import { ModalVideo } from "../../components/Modal/ModalVideo";
+import { ModalDelete } from "../../components/Modal/ModalDelete";
 
 export interface PlantaDados {
   id: number;
@@ -44,6 +45,7 @@ export function Planta() {
   const [modalVideoAddIsOpen, setModalVideoAddIsOpen] = useState(false)
   const [modalAtualizaAddIsOpen, setModalAtualizaAddIsOpen] = useState(false)
   const [modalImageAddIsOpen, setModalImageAddIsOpen] = useState(false)
+  const [modalDeleteIsOpen, setModalDeleteIsOpen] = useState(false)
 
   const [content, setContent] = useState<PlantaDados[]>([])
   const [atualiza, setAtualiza] = useState(false);
@@ -57,6 +59,11 @@ export function Planta() {
     setModalFarmaciaAddIsOpen(!modalFarmaciaAddIsOpen)
   }
   
+  const handleToggleOpenModalDelete = async (id: number) => {
+    setIdClick(id)
+    setModalDeleteIsOpen(!modalDeleteIsOpen)
+  }
+
   const handleToggleAddOpenModalAgronomia = () => {
     setModalAgronomiaAddIsOpen(!modalAgronomiaAddIsOpen)
   }
@@ -286,7 +293,6 @@ export function Planta() {
     buscaDados()
     setAtualiza(false);
   },[atualiza])
-  console.log(content)
 
   return (
     <>
@@ -373,7 +379,13 @@ export function Planta() {
                           modalAddIsOpen={modalVideoAddIsOpen}
                           handleToggleAddOpenModal={handleToggleAddOpenModalVideo}
                         />
-                        <AcaoButton mod="delete" id={item.id.toString()} handleDeletebutton={handleDeletePlanta} ><Trash size={18} weight="fill" /></AcaoButton>
+                        <AcaoButton mod="delete" id={item.id.toString()} handleDeletebutton={handleToggleOpenModalDelete} ><Trash size={18} weight="fill" /></AcaoButton>
+                        <ModalDelete 
+                          id={idClick}
+                          handleToggleOpenModalDelete={handleToggleOpenModalDelete}
+                          modalAddIsOpen={modalDeleteIsOpen}
+                          handleDeletePlanta={handleDeletePlanta}
+                        />
                       </div>
                     </td>
                   </tr>

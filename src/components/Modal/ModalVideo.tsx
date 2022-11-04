@@ -76,6 +76,7 @@ export function ModalVideo({ modalAddIsOpen, handleToggleAddOpenModal, id, handl
 
   useEffect(() => {
     buscaDados()
+    setAtualiza(false)
   },[id, atualiza])
 
   if(planta.length == 0){

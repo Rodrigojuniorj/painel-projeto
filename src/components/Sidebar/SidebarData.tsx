@@ -12,12 +12,12 @@ const styleIcon = styled.div`
 `
 
 export const SidebarData = [
-  {
-    title: 'Dashboard',
-    path: '/paineladm',
-    icon: <House size={20} />,
-    cName: 'nav-text',
-  },
+  // {
+  //   title: 'Dashboard',
+  //   path: '/paineladm',
+  //   icon: <House size={20} />,
+  //   cName: 'nav-text',
+  // },
   {
     title: 'Plantas',
     path: '/paineladm/plantas',
