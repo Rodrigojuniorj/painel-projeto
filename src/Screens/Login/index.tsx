@@ -6,15 +6,23 @@ import { AuthContext } from '../../context/AuthContext'
 
 import { LoginContainer, LoginForm, SubmitButtonLogin } from './styles'
 import { toast } from 'react-toastify'
+import { getLocalStorage } from '../../utils/localStorageExpires'
+import { useNavigate } from 'react-router-dom'
 
 const newLoginFormValidationSchema = zod.object({
-  login: zod.string().min(5, 'Informe um usuário válido'),
+  login: zod.string().min(2, 'Informe um usuário válido'),
   password: zod.string(),
 })
 
 type NewLoginFormData = zod.infer<typeof newLoginFormValidationSchema>
 
 export function Login() {
+  const navigate = useNavigate()
+
+  if(getLocalStorage('@info-plantas:auth-1.0.0')){
+    navigate('/paineladm/plantas')
+  }
+
   const authLogin = useContextSelector(AuthContext, (context) => {
     return context.authLogin
   })

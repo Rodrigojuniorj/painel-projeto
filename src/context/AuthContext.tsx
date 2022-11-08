@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 import { createContext } from 'use-context-selector'
 import { Api } from '../services/api'
 import { useNavigate } from 'react-router-dom'
+import { getLocalStorage, setLocalStorage } from '../utils/localStorageExpires'
 
 interface User {
   login: string,
@@ -30,14 +31,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async (data: User) => {
       const { login, password } = data
       
-      await Api.post('/api/user/login', {
-        login,
-        password,
+      await Api.post('/usuario/login/', {        
+        nome: login,
+        senha: password,
       })
       .then((response) => {
         setUser(response.data)
-        localStorage.setItem('@info-plantas:auth-1.0.0', JSON.stringify(response.data))
-        navigate('/admin')
+        setLocalStorage('@info-plantas:auth-1.0.0', JSON.stringify(response.data), 1)
+        navigate('/paineladm/plantas')
       })
       .catch((error) => {
         toast.error(error.response.data['error'])
@@ -47,17 +48,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
   )
 
   const userLogin = useCallback(() => {
-    console.log('dawad')
-    const user = localStorage.getItem('@info-plantas:auth-1.0.0')
+    const user = getLocalStorage('@info-plantas:auth-1.0.0')
     if (!user) {
-      console.log('dwadw')
       navigate('/')
     }
   },[])
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('@info-plantas:auth-1.0.0')
-    navigate('/')
+  const logout = useCallback(
+    async () => {
+      const user = JSON.parse(getLocalStorage('@info-plantas:auth-1.0.0'))
+
+      await Api.delete(`/usuario/logout/`, {
+        data: user
+      })
+      .then((response) => {
+        localStorage.removeItem('@info-plantas:auth-1.0.0')
+        navigate('/')
+      })
+      .catch((error) => {
+        toast.error(error.response.data['error'])
+      })
   },[])
 
   return (

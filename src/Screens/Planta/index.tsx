@@ -271,7 +271,7 @@ export function Planta() {
 
   const handleDeletePlanta = async (id: number) => {
     await Api.delete("/planta/remover", {
-      data: { id: id }, headers: { "Authorization": "***" }
+      data: { id: id }
     })
     .then(
       (response) => {
@@ -307,10 +307,10 @@ export function Planta() {
             modalAddIsOpen={modalAddIsOpen}
             handleToggleAddOpenModal={handleToggleAddOpenModal}
           />
-          <SearchWraper>
+          {/* <SearchWraper>
             <MagnifyingGlass size={16} weight="bold" />
             <InputSearch type="text" placeholder="Pesquisar planta"  />
-          </SearchWraper>
+          </SearchWraper> */}
         </ContainerHeader>
         <PlantaList>
         {content.length ? (
