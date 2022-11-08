@@ -4,10 +4,12 @@ import { LoginLayout } from '../layouts/LoginLayout'
 import { Dashboard } from '../Screens/Dashboard'
 import { Login } from '../Screens/Login'
 import { Planta } from '../Screens/Planta'
+import { Privacidade } from '../Screens/Privacidade'
 
 export function Router() {
   return (
     <Routes>
+      <Route path="/privacidade" element={<Privacidade />} />
       <Route path="/" element={<LoginLayout />}>
         <Route path="/" element={<Login />} />
       </Route>
@@ -15,6 +17,7 @@ export function Router() {
         <Route path="/paineladm" element={<Dashboard />} />
         <Route path="/paineladm/plantas" element={<Planta />} />
       </Route>
+      
     </Routes>
   )
 }
