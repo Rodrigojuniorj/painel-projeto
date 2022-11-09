@@ -55,7 +55,8 @@ export function Planta() {
     setModalAddIsOpen(!modalAddIsOpen)
   }
   
-  const handleToggleAddOpenModalFarmacia = () => {
+  const handleToggleAddOpenModalFarmacia = (id: number) => {
+    setIdClick(id)
     setModalFarmaciaAddIsOpen(!modalFarmaciaAddIsOpen)
   }
   
@@ -64,7 +65,8 @@ export function Planta() {
     setModalDeleteIsOpen(!modalDeleteIsOpen)
   }
 
-  const handleToggleAddOpenModalAgronomia = () => {
+  const handleToggleAddOpenModalAgronomia = (id: number) => {
+    setIdClick(id)
     setModalAgronomiaAddIsOpen(!modalAgronomiaAddIsOpen)
   }
   
@@ -332,20 +334,20 @@ export function Planta() {
                     })}</td>
                     <td>
                       <div className="escolhaTipo">
-                        <Button id={item.id.toString()} type="button" onClick={handleToggleAddOpenModalFarmacia} ><Pill size={16} weight="fill" />Farmácia</Button>
+                        <Button id={item.id.toString()} type="button" onClick={() => handleToggleAddOpenModalFarmacia(item.id)} ><Pill size={16} weight="fill" />Farmácia</Button>
                         <ModalFarmacia
-                          idPlanta={item.id}
+                          idPlanta={idClick}
                           handleAddFarmacia={handleAddFarmacia}
                           modalAddIsOpen={modalFarmaciaAddIsOpen}
-                          handleToggleAddOpenModal={handleToggleAddOpenModalFarmacia}
+                          handleToggleAddOpenModal={() => handleToggleAddOpenModalFarmacia(item.id)}
                         />
                         
-                        <Button type="button" onClick={handleToggleAddOpenModalAgronomia}><Tree size={16} weight="fill" />Agronomia</Button>
+                        <Button type="button" id={item.id.toString()} onClick={() => handleToggleAddOpenModalAgronomia(item.id)}><Tree size={16} weight="fill" />Agronomia</Button>
                         <ModalAgro
-                          idPlanta={item.id}
+                          idPlanta={idClick}
                           handleAddAgro={handleAddAgro}
                           modalAddIsOpen={modalAgronomiaAddIsOpen}
-                          handleToggleAddOpenModal={handleToggleAddOpenModalAgronomia}
+                          handleToggleAddOpenModal={() => handleToggleAddOpenModalAgronomia(idClick)}
                         />
                       </div>
                     </td>

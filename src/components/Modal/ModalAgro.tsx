@@ -7,7 +7,7 @@ import { FormContentModal, ModalInputContent } from "./ModalAgroStyles";
 
 interface ModalAgroProps {
   modalAddIsOpen: boolean;
-  handleToggleAddOpenModal: () => void;
+  handleToggleAddOpenModal: (id: Number) => void;
   handleAddAgro: (agro: AgroDados, id: number) => void;
   idPlanta: number;
 }
@@ -29,17 +29,26 @@ export function ModalAgro({ modalAddIsOpen, handleToggleAddOpenModal, idPlanta, 
   const [praga, setPraga] = useState('');
   const [irrigacao, setIrrigacao] = useState('');
   const [atualiza, setAtualiza] = useState(false);
-  
+
   async function buscaDados() {
     const response = await Api.get(`/planta/id/${idPlanta}`);
     const dados:AgroDados = response.data.agroDados;
 
-    setTratosCulturais(dados.tratosCulturais);
-    setCultivo(dados.cultivo);
-    setMaterialMetdos(dados.materialMetodos);
-    setAdubacao(dados.adubacao);
-    setPraga(dados.praga);
-    setIrrigacao(dados.irrigacao);
+    if(dados){
+      setTratosCulturais(dados.tratosCulturais);
+      setCultivo(dados.cultivo);
+      setMaterialMetdos(dados.materialMetodos);
+      setAdubacao(dados.adubacao);
+      setPraga(dados.praga);
+      setIrrigacao(dados.irrigacao);
+    }else{
+      setTratosCulturais('');
+      setCultivo('');
+      setMaterialMetdos('');
+      setAdubacao('');
+      setPraga('');
+      setIrrigacao('');
+    }
   }
 
   function handleSubmitForm (event: FormEvent) {
@@ -56,19 +65,19 @@ export function ModalAgro({ modalAddIsOpen, handleToggleAddOpenModal, idPlanta, 
 
     handleAddAgro(dados, idPlanta);
     setAtualiza(true);  
-    handleToggleAddOpenModal();
+    handleToggleAddOpenModal(idPlanta);
   }
 
   useEffect(() => {
     buscaDados()
     setAtualiza(false);  
-  },[atualiza])
+  },[atualiza, idPlanta])
 
   return (
-    <Modal isOpen={modalAddIsOpen} setIsOpen={handleToggleAddOpenModal}>
+    <Modal isOpen={modalAddIsOpen} setIsOpen={() => handleToggleAddOpenModal(idPlanta)}>
       <ModalInputContent>
         <h3>Conteúdo Agronomia</h3>
-        <button type="button" onClick={handleToggleAddOpenModal}>
+        <button type="button" onClick={() => handleToggleAddOpenModal(idPlanta)}>
             <X size={20} />
         </button>
 

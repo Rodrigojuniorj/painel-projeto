@@ -7,7 +7,7 @@ import { Api } from "../../services/api";
 
 interface ModalFarmaciaProps {
   modalAddIsOpen: boolean;
-  handleToggleAddOpenModal: () => void;
+  handleToggleAddOpenModal: (id: number) => void;
   handleAddFarmacia: (farmacia: FarmaciaDados, id: number) => void;
   idPlanta: number;
 }
@@ -70,7 +70,7 @@ export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlan
     }
 
     handleAddFarmacia(dados, idPlanta);
-    // setAtualiza(true);  
+    setAtualiza(true);  
     handleToggleAddOpenModal();
   }
 
@@ -78,30 +78,32 @@ export function ModalFarmacia({ modalAddIsOpen, handleToggleAddOpenModal, idPlan
     const response = await Api.get(`/planta/id/${idPlanta}`);
     const dados = response.data.farmaciaDados;
 
-    setUtilizacao(dados.utilizacao);
-    setTerapeutico(dados.terapeutico);
-    setContraindicacao(dados.contraindicacao);
-    setFonte(dados.fonte);
-    setBeneficios(dados.beneficios);
+    setUtilizacao(dados.utilizacao || '');
+    setTerapeutico(dados.terapeutico || '');
+    setContraindicacao(dados.contraindicacao || '');
+    setFonte(dados.fonte || '');
+    setBeneficios(dados.beneficios || '');
     if(dados.modoDeUsar.length > 0) {
       const modoDeUsar = dados.modoDeUsar.map((item: any) => {
         return {description: item}
       })
-      
       setModoDeUso(modoDeUsar);
     }
+    if(dados.modoDeUsar.length === 0) {
+      setModoDeUso(['']);
+    }
+    setAtualiza(false);  
   }
 
   useEffect(() => {
     buscaDados()
-    setAtualiza(false);  
-  },[atualiza])
+  },[atualiza, idPlanta])
 
   return (
-    <Modal isOpen={modalAddIsOpen} setIsOpen={handleToggleAddOpenModal}>
+    <Modal isOpen={modalAddIsOpen} setIsOpen={() => handleToggleAddOpenModal(idPlanta)}>
       <ModalInputContent>
         <h3>Conteúdo Farmácia</h3>
-        <button type="button" onClick={handleToggleAddOpenModal}>
+        <button type="button" onClick={() => handleToggleAddOpenModal(idPlanta)}>
             <X size={20} />
         </button>
 
